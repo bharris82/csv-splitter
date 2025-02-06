@@ -16,20 +16,23 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        # Validate if a file was uploaded
+        # Check if a file was uploaded
         if "file" not in request.files:
-            return "No file part"
-
+            return "No file part", 400  # Bad Request
+        
         file = request.files["file"]
         if file.filename == "":
-            return "No selected file"
-
+            return "No selected file", 400  # Bad Request
+        
         # Save uploaded file
         file_path = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
         file.save(file_path)
 
         # Get number of rows per file
-        rows_per_file = int(request.form["rows"])
+        try:
+            rows_per_file = int(request.form["rows"])
+        except ValueError:
+            return "Invalid row number", 400
 
         # Process CSV file and split it
         df = pd.read_csv(file_path)
@@ -54,5 +57,6 @@ def uploaded_file(filename):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  # Get port from Render
     app.run(host="0.0.0.0", port=port)
+
 
 
