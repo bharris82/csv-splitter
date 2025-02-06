@@ -16,7 +16,6 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        # Check if a file was uploaded
         if "file" not in request.files:
             return "No file part", 400
         
@@ -55,5 +54,5 @@ def uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Get port from Render
-    app.run(host="0.0.0.0", port=port, debug=True)  # Enable debug mode for troubleshooting
+    port = int(os.environ.get("PORT", 5000))  # Ensure it uses Render's PORT
+    app.run(host="0.0.0.0", port=port)  # Correct port binding
